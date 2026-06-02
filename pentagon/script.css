@@ -1,0 +1,316 @@
+const shapeItems = {
+
+Pentagon:[
+"house.png",
+"gift.png"
+],
+
+Hexagon:[
+"honey.png",
+"nut.png",
+"tile.png",
+"go.png",
+"pencil.png"
+],
+
+Octagon:[
+"stop.png",
+"roadmarker.png",
+"specs.png"
+]
+
+};
+
+const allObjects=[
+
+"house.png",
+"gift.png",
+
+"honey.png",
+"nut.png",
+"tile.png",
+"go.png",
+"pencil.png",
+
+"stop.png",
+"roadmarker.png",
+"specs.png"
+
+];
+
+let score = 0;
+let currentShape = "";
+
+const scoreDisplay =
+document.getElementById("score");
+
+const targetText =
+document.getElementById("targetText");
+
+const feedback =
+document.getElementById("feedback");
+
+const bgMusic =
+document.getElementById("bgMusic");
+
+const claps =
+document.getElementById("claps");
+
+const buzzer =
+document.getElementById("buzzer");
+
+function speak(text, callback=null){
+
+if(!window.speechSynthesis){
+
+if(callback) callback();
+
+return;
+}
+
+speechSynthesis.cancel();
+
+const utter =
+new SpeechSynthesisUtterance(text);
+
+utter.rate = 0.9;
+
+if(callback){
+utter.onend = callback;
+}
+
+speechSynthesis.speak(utter);
+
+}
+
+function createObjects(){
+
+const container =
+document.getElementById("objects");
+
+container.innerHTML="";
+
+allObjects.forEach(item=>{
+
+const card =
+document.createElement("div");
+
+card.className="card";
+
+const img =
+document.createElement("img");
+
+img.src =
+"assets/" + item;
+
+img.draggable = true;
+
+img.dataset.name = item;
+
+img.addEventListener("dragstart",e=>{
+
+e.dataTransfer.setData(
+"text/plain",
+item
+);
+
+});
+
+card.appendChild(img);
+
+container.appendChild(card);
+
+});
+
+}
+
+createObjects();
+
+window.onload = ()=>{
+
+setTimeout(()=>{
+
+document.getElementById("splash")
+.style.display="none";
+
+document.getElementById("game")
+.style.display="block";
+
+speak(
+"Welcome. Spin the spinner. Drag the correct object to the matching shape.",
+()=>{
+
+bgMusic.volume=0.25;
+
+bgMusic.play();
+
+}
+);
+
+},5000);
+
+};
+
+document.getElementById("spinner")
+.addEventListener("click",()=>{
+
+const shapes=[
+"Pentagon",
+"Hexagon",
+"Octagon"
+];
+
+currentShape =
+shapes[
+Math.floor(
+Math.random()*3
+)
+];
+
+targetText.innerHTML =
+"Find a " + currentShape;
+
+speak(
+"Find a " + currentShape
+);
+
+});
+
+document.querySelectorAll(".shape")
+.forEach(shape=>{
+
+shape.addEventListener(
+"dragover",
+e=>{
+e.preventDefault();
+}
+);
+
+shape.addEventListener(
+"drop",
+e=>{
+
+e.preventDefault();
+
+const item =
+e.dataTransfer.getData(
+"text/plain"
+);
+
+const droppedShape =
+shape.dataset.shape;
+
+if(
+droppedShape !== currentShape
+){
+wrongAnswer();
+return;
+}
+
+if(
+shapeItems[currentShape]
+.includes(item)
+){
+correctAnswer(item);
+}
+else{
+wrongAnswer();
+}
+
+}
+);
+
+});
+
+function correctAnswer(item){
+
+score++;
+
+scoreDisplay.textContent =
+score;
+
+feedback.innerHTML =
+"✅ Great Job!";
+
+claps.currentTime = 0;
+
+claps.play();
+
+speak("Excellent");
+
+document
+.querySelectorAll(".card img")
+.forEach(img=>{
+
+if(
+img.dataset.name===item
+){
+
+img.parentElement.remove();
+
+}
+
+});
+
+setTimeout(()=>{
+
+feedback.innerHTML="";
+
+targetText.innerHTML=
+"Spin Again";
+
+},2000);
+
+checkFinish();
+
+}
+
+function wrongAnswer(){
+
+feedback.innerHTML =
+"❌ Try Again";
+
+buzzer.currentTime = 0;
+
+buzzer.play();
+
+speak("Try Again");
+
+}
+
+function checkFinish(){
+
+const remaining =
+document.querySelectorAll(
+".card img"
+).length;
+
+if(remaining===0){
+
+document.getElementById(
+"finalScreen"
+).style.display="flex";
+
+document.getElementById(
+"finalScore"
+).innerHTML=
+"Total Score : "
++ score +
+" / 10";
+
+claps.play();
+
+speak(
+"Congratulations. You completed the game."
+);
+
+}
+
+}
+
+document.getElementById("replayBtn")
+.addEventListener("click",()=>{
+
+location.reload();
+
+});
