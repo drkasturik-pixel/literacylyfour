@@ -3,82 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shapes Spinner Game</title>
-
+<title>Shape Sorting Game</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- SPLASH SCREEN -->
-
 <div id="splash">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    <img src="assets/innovine-logo.png">
 </div>
-
-<!-- GAME -->
 
 <div id="game">
 
-    <div id="instructionBar">
-        Spin the spinner and drag the correct object to the matching shape.
-    </div>
+    <h1 id="instruction">
+        Drag each object into the correct shape column
+    </h1>
 
     <div id="scorePanel">
-        Score : <span id="score">0</span>
-    </div>
-
-    <div id="targetText">
-        Click the spinner to start
-    </div>
-
-    <div id="gameContainer">
-
-        <!-- SHAPES + SPINNER -->
-
-        <div id="shapeArea">
-
-            <img src="assets/hexagon.png"
-                 id="hexagon"
-                 class="shape"
-                 data-shape="Hexagon">
-
-            <img src="assets/pentagon.png"
-                 id="pentagon"
-                 class="shape"
-                 data-shape="Pentagon">
-
-            <div id="spinnerContainer">
-
-                <div id="arrow">
-                    ▼
-                </div>
-
-                <img src="assets/spinner.gif"
-                     id="spinner">
-
-            </div>
-
-            <img src="assets/octagon.png"
-                 id="octagon"
-                 class="shape"
-                 data-shape="Octagon">
-
-        </div>
-
-        <!-- OBJECTS -->
-
-        <div id="objects">
-
-        </div>
-
+        Score: <span id="score">0</span>
     </div>
 
     <div id="feedback"></div>
 
-</div>
+    <div id="columns">
 
-<!-- FINAL SCREEN -->
+        <div class="column" data-shape="Pentagon">
+
+            <img src="assets/pentagon.png" class="shapeImage">
+
+            <h2>Pentagon</h2>
+
+            <div class="dropZone"></div>
+
+        </div>
+
+        <div class="column" data-shape="Hexagon">
+
+            <img src="assets/hexagon.png" class="shapeImage">
+
+            <h2>Hexagon</h2>
+
+            <div class="dropZone"></div>
+
+        </div>
+
+        <div class="column" data-shape="Octagon">
+
+            <img src="assets/octagon.png" class="shapeImage">
+
+            <h2>Octagon</h2>
+
+            <div class="dropZone"></div>
+
+        </div>
+
+    </div>
+
+    <div id="objectTray"></div>
+
+</div>
 
 <div id="finalScreen">
 
@@ -86,23 +69,15 @@
 
     <h2 id="finalScore"></h2>
 
-    <button id="replayBtn">
+    <button onclick="location.reload()">
         Play Again
     </button>
 
 </div>
 
-<!-- AUDIO -->
-
-<audio id="bgMusic"
-       src="assets/bgmusic.mp3"
-       loop></audio>
-
-<audio id="claps"
-       src="assets/claps.mp3"></audio>
-
-<audio id="buzzer"
-       src="assets/buzzer.mp3"></audio>
+<audio id="bgMusic" src="assets/bgmusic.mp3" loop></audio>
+<audio id="claps" src="assets/claps.mp3"></audio>
+<audio id="buzzer" src="assets/buzzer.mp3"></audio>
 
 <script src="script.js"></script>
 
