@@ -1,193 +1,598 @@
+/* =====================================
+   GLOBAL STYLES
+===================================== */
+
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',sans-serif;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 body{
-height:100vh;
-overflow:hidden;
-background:#e8f7ff;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    font-family:'Trebuchet MS',sans-serif;
+
+    background:
+    linear-gradient(
+        to bottom,
+        #87CEEB 0%,
+        #BFEFFF 60%,
+        #7ED957 60%,
+        #6BCB4A 100%
+    );
+
+    position:relative;
 }
 
-#splash{
-position:fixed;
-inset:0;
-display:flex;
-justify-content:center;
-align-items:center;
-background:white;
-z-index:9999;
+/* Floating Shape Background */
+
+body::before{
+    content:"⬟ ⬢ ⬣ ⬟ ⬢ ⬣";
+    position:absolute;
+    top:10%;
+    left:5%;
+    font-size:80px;
+    opacity:.08;
+    pointer-events:none;
 }
 
-#splash img{
-width:320px;
-max-width:80%;
+body::after{
+    content:"⬢ ⬟ ⬣ ⬢";
+    position:absolute;
+    bottom:15%;
+    right:5%;
+    font-size:70px;
+    opacity:.08;
+    pointer-events:none;
 }
 
-#game{
-display:none;
-height:100vh;
-padding:10px;
+/* =====================================
+   COMMON SCREENS
+===================================== */
+
+.screen{
+    width:100%;
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-#instructionBar{
-text-align:center;
-background:#fff6b8;
-padding:12px;
-border-radius:12px;
-font-size:22px;
-font-weight:bold;
-color:#004080;
+.hidden{
+    display:none !important;
 }
 
-#scorePanel{
-text-align:center;
-font-size:20px;
-padding:8px;
+/* =====================================
+   SPLASH SCREEN
+===================================== */
+
+#splashScreen{
+    background:white;
 }
 
-#targetText{
-text-align:center;
-font-size:26px;
-font-weight:bold;
-color:#cc0000;
-padding:10px;
+#logo{
+    width:min(350px,70vw);
+
+    animation:
+    fadeIn 2s ease,
+    fadeOut 2s ease 3s forwards;
 }
 
-#gameContainer{
-display:flex;
-height:70vh;
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:scale(.7);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
 }
 
-#shapeArea{
-flex:2;
-position:relative;
+@keyframes fadeOut{
+    from{
+        opacity:1;
+    }
+    to{
+        opacity:0;
+    }
 }
 
-.shape{
-position:absolute;
-width:180px;
-height:180px;
-object-fit:contain;
+/* =====================================
+   INSTRUCTION SCREEN
+===================================== */
+
+#instructionScreen{
+    padding:20px;
 }
 
-#hexagon{
-top:0;
-left:50%;
-transform:translateX(-50%);
+.instruction-box{
+
+    width:min(700px,95vw);
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:35px;
+
+    text-align:center;
+
+    box-shadow:
+    0 8px 30px rgba(0,0,0,.15);
 }
 
-#pentagon{
-left:10px;
-top:50%;
-transform:translateY(-50%);
+.instruction-box h1{
+    color:#ff6600;
+    margin-bottom:20px;
+    font-size:clamp(28px,4vw,48px);
 }
 
-#octagon{
-bottom:0;
-left:50%;
-transform:translateX(-50%);
+.instruction-box p{
+    font-size:clamp(18px,2vw,24px);
+    line-height:1.6;
+    color:#444;
 }
 
-#spinnerContainer{
-position:absolute;
-left:50%;
-top:50%;
-transform:translate(-50%,-50%);
-text-align:center;
+#startBtn{
+
+    margin-top:30px;
+
+    border:none;
+
+    background:#28a745;
+
+    color:white;
+
+    font-size:24px;
+
+    padding:15px 40px;
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    transition:.3s;
 }
 
-#arrow{
-font-size:40px;
-color:red;
-font-weight:bold;
+#startBtn:hover{
+    transform:scale(1.05);
 }
 
-#spinner{
-width:130px;
-height:130px;
-cursor:pointer;
+/* =====================================
+   GAME SCREEN
+===================================== */
+
+#gameScreen{
+    width:100%;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
 }
 
-#objects{
-flex:1;
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-padding:10px;
-align-content:start;
+/* HEADER */
+
+header{
+
+    height:80px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:10px 25px;
+
+    background:#ffffffdd;
+
+    backdrop-filter:blur(5px);
+
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
-.card{
-background:white;
-border-radius:12px;
-padding:5px;
-border:2px solid #ccc;
-text-align:center;
+header h2{
+    color:#ff6600;
 }
 
-.card img{
-width:75px;
-height:75px;
-object-fit:contain;
+#scoreBox{
+
+    background:#ffd93d;
+
+    padding:10px 18px;
+
+    border-radius:15px;
+
+    font-size:20px;
+
+    font-weight:bold;
 }
 
-#feedback{
-text-align:center;
-font-size:38px;
-font-weight:bold;
-height:50px;
-margin-top:5px;
+/* =====================================
+   GAME AREA
+===================================== */
+
+#gameArea{
+
+    flex:1;
+
+    display:flex;
+
+    padding:20px;
+
+    gap:20px;
 }
 
-#finalScreen{
-display:none;
-position:fixed;
-inset:0;
-background:white;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-text-align:center;
-z-index:10000;
+/* =====================================
+   OBJECT AREA
+===================================== */
+
+#objectArea{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    position:relative;
 }
 
-#replayBtn{
-padding:15px 30px;
-font-size:22px;
-background:#4caf50;
-color:white;
-border:none;
-border-radius:12px;
-cursor:pointer;
-margin-top:20px;
+#currentObjectContainer{
+
+    width:250px;
+
+    height:250px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
 }
+
+#currentObject{
+
+    max-width:220px;
+
+    max-height:220px;
+
+    object-fit:contain;
+
+    cursor:grab;
+
+    animation:riseUp .8s ease;
+}
+
+@keyframes riseUp{
+
+    from{
+        opacity:0;
+        transform:
+        translateY(250px);
+    }
+
+    to{
+        opacity:1;
+        transform:
+        translateY(0);
+    }
+}
+
+/* =====================================
+   FEEDBACK
+===================================== */
+
+.feedback{
+
+    position:absolute;
+
+    top:20px;
+
+    font-size:120px;
+
+    font-weight:bold;
+
+    animation:pop .6s ease;
+}
+
+#tick{
+    color:#28a745;
+}
+
+#cross{
+    color:#dc3545;
+}
+
+@keyframes pop{
+
+    from{
+        transform:scale(.3);
+        opacity:0;
+    }
+
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+/* =====================================
+   TRY AGAIN BUTTON
+===================================== */
+
+#tryAgainBtn{
+
+    margin-top:20px;
+
+    background:#ff4d4d;
+
+    color:white;
+
+    border:none;
+
+    border-radius:15px;
+
+    padding:14px 30px;
+
+    font-size:22px;
+
+    cursor:pointer;
+}
+
+/* =====================================
+   SHAPE COLUMNS
+===================================== */
+
+#dropZones{
+
+    flex:1.4;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:15px;
+}
+
+.shape-column{
+
+    background:#ffffffdd;
+
+    border-radius:20px;
+
+    padding:15px;
+
+    text-align:center;
+
+    box-shadow:
+    0 4px 12px rgba(0,0,0,.1);
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+}
+
+.shape-img{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:contain;
+}
+
+.shape-column h3{
+
+    margin:10px 0;
+
+    color:#444;
+}
+
+.dropzone{
+
+    flex:1;
+
+    width:100%;
+
+    min-height:220px;
+
+    border:4px dashed #888;
+
+    border-radius:18px;
+
+    transition:.3s;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#f8f9fa;
+}
+
+.dropzone.dragover{
+
+    border-color:#28a745;
+
+    background:#eaffea;
+
+    transform:scale(1.02);
+}
+
+/* =====================================
+   COMPLETION SCREEN
+===================================== */
+
+#completionScreen{
+
+    background:
+    linear-gradient(
+    135deg,
+    #ffe066,
+    #ffd43b
+    );
+}
+
+.completion-card{
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:25px;
+
+    text-align:center;
+
+    width:min(650px,95vw);
+
+    animation:celebrate 1s ease;
+}
+
+@keyframes celebrate{
+
+    from{
+        transform:scale(.7);
+        opacity:0;
+    }
+
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+.completion-card h1{
+
+    color:#ff6600;
+
+    margin-bottom:20px;
+}
+
+.completion-card p{
+
+    font-size:22px;
+
+    margin-bottom:20px;
+}
+
+#finalScore,
+#percentage{
+
+    margin:10px 0;
+
+    color:#333;
+}
+
+#stars{
+
+    font-size:60px;
+
+    margin:20px 0;
+}
+
+#playAgainBtn{
+
+    border:none;
+
+    background:#28a745;
+
+    color:white;
+
+    padding:15px 35px;
+
+    border-radius:16px;
+
+    font-size:24px;
+
+    cursor:pointer;
+}
+
+/* =====================================
+   MOBILE RESPONSIVE
+===================================== */
 
 @media(max-width:900px){
 
-.shape{
-width:110px;
-height:110px;
+    #gameArea{
+
+        flex-direction:column;
+    }
+
+    #dropZones{
+
+        grid-template-columns:
+        repeat(3,1fr);
+
+        height:45%;
+    }
+
+    .shape-img{
+        width:60px;
+        height:60px;
+    }
+
+    .dropzone{
+        min-height:120px;
+    }
+
+    #currentObject{
+        max-width:150px;
+        max-height:150px;
+    }
+
+    header h2{
+        font-size:18px;
+    }
+
+    #scoreBox{
+        font-size:16px;
+    }
 }
 
-#spinner{
-width:90px;
-height:90px;
-}
+@media(max-width:600px){
 
-.card img{
-width:55px;
-height:55px;
-}
+    header{
 
-#instructionBar{
-font-size:16px;
-}
+        flex-direction:column;
 
-#targetText{
-font-size:20px;
-}
+        height:auto;
 
+        gap:8px;
+
+        padding:10px;
+    }
+
+    .shape-column h3{
+        font-size:14px;
+    }
+
+    .dropzone{
+        min-height:90px;
+    }
+
+    #currentObject{
+        max-width:130px;
+        max-height:130px;
+    }
+
+    #stars{
+        font-size:40px;
+    }
+
+    .feedback{
+        font-size:80px;
+    }
 }
