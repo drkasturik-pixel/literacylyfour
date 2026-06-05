@@ -1,598 +1,737 @@
-/* =====================================
-   GLOBAL STYLES
-===================================== */
+/* ==========================
+RESET
+========================== */
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:'Trebuchet MS', Arial, sans-serif;
 }
 
 body{
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
-    font-family:'Trebuchet MS',sans-serif;
 
-    background:
-    linear-gradient(
-        to bottom,
-        #87CEEB 0%,
-        #BFEFFF 60%,
-        #7ED957 60%,
-        #6BCB4A 100%
-    );
+```
+background:
+linear-gradient(
+    to bottom,
+    #87CEEB 0%,
+    #BFEFFF 60%,
+    #7ED957 60%,
+    #5CB338 100%
+);
 
-    position:relative;
+position:relative;
+```
+
 }
 
-/* Floating Shape Background */
+/* ==========================
+BACKGROUND SHAPES
+========================== */
 
 body::before{
-    content:"⬟ ⬢ ⬣ ⬟ ⬢ ⬣";
-    position:absolute;
-    top:10%;
-    left:5%;
-    font-size:80px;
-    opacity:.08;
-    pointer-events:none;
+content:"⬟ ⬢ ⬣ ⬟ ⬢";
+position:absolute;
+top:10%;
+left:5%;
+font-size:90px;
+opacity:0.06;
+pointer-events:none;
 }
 
 body::after{
-    content:"⬢ ⬟ ⬣ ⬢";
-    position:absolute;
-    bottom:15%;
-    right:5%;
-    font-size:70px;
-    opacity:.08;
-    pointer-events:none;
+content:"⬢ ⬣ ⬟ ⬢";
+position:absolute;
+right:5%;
+bottom:15%;
+font-size:80px;
+opacity:0.06;
+pointer-events:none;
 }
 
-/* =====================================
-   COMMON SCREENS
-===================================== */
+/* ==========================
+SCREENS
+========================== */
 
 .screen{
-    width:100%;
-    height:100vh;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
+width:100%;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
 .hidden{
-    display:none !important;
+display:none !important;
 }
 
-/* =====================================
-   SPLASH SCREEN
-===================================== */
+/* ==========================
+SPLASH SCREEN
+========================== */
 
 #splashScreen{
-    background:white;
+background:white;
+}
+
+.logo-container{
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
 #logo{
-    width:min(350px,70vw);
+width:min(350px,75vw);
 
-    animation:
-    fadeIn 2s ease,
-    fadeOut 2s ease 3s forwards;
+```
+animation:
+fadeIn 2s ease,
+fadeOut 2s ease 3s forwards;
+```
+
 }
 
 @keyframes fadeIn{
-    from{
-        opacity:0;
-        transform:scale(.7);
-    }
-    to{
-        opacity:1;
-        transform:scale(1);
-    }
+from{
+opacity:0;
+transform:scale(.7);
+}
+to{
+opacity:1;
+transform:scale(1);
+}
 }
 
 @keyframes fadeOut{
-    from{
-        opacity:1;
-    }
-    to{
-        opacity:0;
-    }
+from{
+opacity:1;
+}
+to{
+opacity:0;
+}
 }
 
-/* =====================================
-   INSTRUCTION SCREEN
-===================================== */
+/* ==========================
+INSTRUCTIONS
+========================== */
 
 #instructionScreen{
-    padding:20px;
+padding:20px;
 }
 
 .instruction-box{
 
-    width:min(700px,95vw);
+```
+width:min(700px,95vw);
 
-    background:white;
+background:white;
 
-    border-radius:25px;
+border-radius:25px;
 
-    padding:35px;
+padding:35px;
 
-    text-align:center;
+text-align:center;
 
-    box-shadow:
-    0 8px 30px rgba(0,0,0,.15);
+box-shadow:
+0 10px 25px rgba(0,0,0,.15);
+```
+
 }
 
 .instruction-box h1{
-    color:#ff6600;
-    margin-bottom:20px;
-    font-size:clamp(28px,4vw,48px);
+
+```
+color:#ff6600;
+
+margin-bottom:20px;
+
+font-size:
+clamp(30px,4vw,48px);
+```
+
 }
 
 .instruction-box p{
-    font-size:clamp(18px,2vw,24px);
-    line-height:1.6;
-    color:#444;
+
+```
+color:#444;
+
+line-height:1.6;
+
+font-size:
+clamp(18px,2vw,24px);
+```
+
 }
 
 #startBtn{
 
-    margin-top:30px;
+```
+margin-top:25px;
 
-    border:none;
+background:#28a745;
 
-    background:#28a745;
+color:white;
 
-    color:white;
+border:none;
 
-    font-size:24px;
+border-radius:15px;
 
-    padding:15px 40px;
+padding:16px 40px;
 
-    border-radius:16px;
+font-size:24px;
 
-    cursor:pointer;
+cursor:pointer;
 
-    transition:.3s;
+transition:.3s;
+```
+
 }
 
 #startBtn:hover{
-    transform:scale(1.05);
+transform:scale(1.05);
 }
 
-/* =====================================
-   GAME SCREEN
-===================================== */
+/* ==========================
+GAME SCREEN
+========================== */
 
 #gameScreen{
-    width:100%;
-    height:100vh;
-    display:flex;
-    flex-direction:column;
+
+```
+width:100%;
+height:100vh;
+
+display:flex;
+flex-direction:column;
+```
+
 }
 
-/* HEADER */
+/* ==========================
+HEADER
+========================== */
 
 header{
 
-    height:80px;
+```
+height:80px;
 
-    display:flex;
+display:flex;
 
-    justify-content:space-between;
+justify-content:space-between;
 
-    align-items:center;
+align-items:center;
 
-    padding:10px 25px;
+padding:10px 25px;
 
-    background:#ffffffdd;
+background:#ffffffdd;
 
-    backdrop-filter:blur(5px);
+backdrop-filter:blur(5px);
 
-    box-shadow:0 2px 8px rgba(0,0,0,.1);
+box-shadow:
+0 2px 8px rgba(0,0,0,.1);
+```
+
 }
 
 header h2{
-    color:#ff6600;
+color:#ff6600;
 }
 
 #scoreBox{
 
-    background:#ffd93d;
+```
+background:#FFD93D;
 
-    padding:10px 18px;
+padding:10px 20px;
 
-    border-radius:15px;
+border-radius:15px;
 
-    font-size:20px;
+font-weight:bold;
 
-    font-weight:bold;
+font-size:20px;
+```
+
 }
 
-/* =====================================
-   GAME AREA
-===================================== */
+/* ==========================
+GAME AREA
+========================== */
 
 #gameArea{
 
-    flex:1;
+```
+flex:1;
 
-    display:flex;
+display:flex;
 
-    padding:20px;
+gap:20px;
 
-    gap:20px;
+padding:20px;
+```
+
 }
 
-/* =====================================
-   OBJECT AREA
-===================================== */
+/* ==========================
+OBJECT AREA
+========================== */
 
 #objectArea{
 
-    flex:1;
+```
+flex:1;
 
-    display:flex;
+display:flex;
 
-    flex-direction:column;
+flex-direction:column;
 
-    justify-content:center;
+justify-content:center;
 
-    align-items:center;
+align-items:center;
 
-    position:relative;
+position:relative;
+```
+
 }
 
 #currentObjectContainer{
 
-    width:250px;
+```
+width:260px;
+height:260px;
 
-    height:250px;
+display:flex;
+justify-content:center;
+align-items:center;
+```
 
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
 }
 
 #currentObject{
 
-    max-width:220px;
+```
+max-width:220px;
+max-height:220px;
 
-    max-height:220px;
+object-fit:contain;
 
-    object-fit:contain;
+cursor:grab;
 
-    cursor:grab;
+user-select:none;
+touch-action:none;
 
-    animation:riseUp .8s ease;
+animation:riseUp .8s ease;
+```
+
 }
 
 @keyframes riseUp{
 
-    from{
-        opacity:0;
-        transform:
-        translateY(250px);
-    }
-
-    to{
-        opacity:1;
-        transform:
-        translateY(0);
-    }
+```
+from{
+    opacity:0;
+    transform:
+    translateY(250px);
 }
 
-/* =====================================
-   FEEDBACK
-===================================== */
+to{
+    opacity:1;
+    transform:
+    translateY(0);
+}
+```
+
+}
+
+/* ==========================
+FEEDBACK
+========================== */
 
 .feedback{
 
-    position:absolute;
+```
+position:absolute;
 
-    top:20px;
+top:20px;
 
-    font-size:120px;
+font-size:120px;
 
-    font-weight:bold;
+font-weight:bold;
 
-    animation:pop .6s ease;
+animation:pop .6s ease;
+```
+
 }
 
 #tick{
-    color:#28a745;
+color:#2ECC71;
 }
 
 #cross{
-    color:#dc3545;
+color:#E74C3C;
 }
 
 @keyframes pop{
 
-    from{
-        transform:scale(.3);
-        opacity:0;
-    }
-
-    to{
-        transform:scale(1);
-        opacity:1;
-    }
+```
+from{
+    opacity:0;
+    transform:scale(.4);
 }
 
-/* =====================================
-   TRY AGAIN BUTTON
-===================================== */
+to{
+    opacity:1;
+    transform:scale(1);
+}
+```
+
+}
+
+/* ==========================
+TRY AGAIN
+========================== */
 
 #tryAgainBtn{
 
-    margin-top:20px;
+```
+margin-top:20px;
 
-    background:#ff4d4d;
+background:#E74C3C;
 
-    color:white;
+color:white;
 
-    border:none;
+border:none;
 
-    border-radius:15px;
+border-radius:15px;
 
-    padding:14px 30px;
+padding:14px 30px;
 
-    font-size:22px;
+font-size:22px;
 
-    cursor:pointer;
+cursor:pointer;
+```
+
 }
 
-/* =====================================
-   SHAPE COLUMNS
-===================================== */
+/* ==========================
+SHAPE AREA
+========================== */
 
 #dropZones{
 
-    flex:1.4;
+```
+flex:1.4;
 
-    display:grid;
+display:grid;
 
-    grid-template-columns:
-    repeat(3,1fr);
+grid-template-columns:
+repeat(3,1fr);
 
-    gap:15px;
+gap:15px;
+```
+
 }
 
 .shape-column{
 
-    background:#ffffffdd;
+```
+background:#ffffffdd;
 
-    border-radius:20px;
+border-radius:20px;
 
-    padding:15px;
+padding:15px;
 
-    text-align:center;
+text-align:center;
 
-    box-shadow:
-    0 4px 12px rgba(0,0,0,.1);
+box-shadow:
+0 4px 12px rgba(0,0,0,.1);
 
-    display:flex;
+display:flex;
 
-    flex-direction:column;
+flex-direction:column;
+```
 
-    align-items:center;
 }
 
 .shape-img{
 
-    width:90px;
+```
+width:90px;
+height:90px;
 
-    height:90px;
+object-fit:contain;
 
-    object-fit:contain;
+margin:auto;
+```
+
 }
 
 .shape-column h3{
 
-    margin:10px 0;
+```
+margin:10px 0;
 
-    color:#444;
+color:#444;
+```
+
 }
 
 .dropzone{
 
-    flex:1;
+```
+flex:1;
 
-    width:100%;
+min-height:220px;
 
-    min-height:220px;
+border:4px dashed #888;
 
-    border:4px dashed #888;
+border-radius:18px;
 
-    border-radius:18px;
+background:#F8F9FA;
 
-    transition:.3s;
+transition:.3s;
 
-    display:flex;
+position:relative;
+```
 
-    justify-content:center;
-
-    align-items:center;
-
-    background:#f8f9fa;
 }
 
 .dropzone.dragover{
 
-    border-color:#28a745;
+```
+border-color:#28A745;
 
-    background:#eaffea;
+background:#EAFFEA;
 
-    transform:scale(1.02);
+transform:scale(1.02);
+```
+
 }
 
-/* =====================================
-   COMPLETION SCREEN
-===================================== */
+/* ==========================
+COMPLETION SCREEN
+========================== */
 
 #completionScreen{
 
-    background:
-    linear-gradient(
+```
+background:
+linear-gradient(
     135deg,
-    #ffe066,
-    #ffd43b
-    );
+    #FFE066,
+    #FFD43B
+);
+```
+
 }
 
 .completion-card{
 
-    background:white;
+```
+background:white;
 
-    padding:40px;
+width:min(650px,95vw);
 
-    border-radius:25px;
+border-radius:25px;
 
-    text-align:center;
+padding:40px;
 
-    width:min(650px,95vw);
+text-align:center;
 
-    animation:celebrate 1s ease;
+animation:celebrate 1s ease;
+```
+
 }
 
 @keyframes celebrate{
 
-    from{
-        transform:scale(.7);
-        opacity:0;
-    }
+```
+from{
+    opacity:0;
+    transform:scale(.7);
+}
 
-    to{
-        transform:scale(1);
-        opacity:1;
-    }
+to{
+    opacity:1;
+    transform:scale(1);
+}
+```
+
 }
 
 .completion-card h1{
 
-    color:#ff6600;
+```
+color:#ff6600;
 
-    margin-bottom:20px;
+margin-bottom:20px;
+```
+
 }
 
 .completion-card p{
 
-    font-size:22px;
+```
+font-size:22px;
 
-    margin-bottom:20px;
+margin-bottom:20px;
+```
+
 }
 
 #finalScore,
 #percentage{
 
-    margin:10px 0;
+```
+margin:10px 0;
+```
 
-    color:#333;
 }
 
 #stars{
 
-    font-size:60px;
+```
+font-size:60px;
 
-    margin:20px 0;
+margin:20px 0;
+```
+
 }
 
 #playAgainBtn{
 
-    border:none;
+```
+background:#28A745;
 
-    background:#28a745;
+color:white;
 
-    color:white;
+border:none;
 
-    padding:15px 35px;
+border-radius:15px;
 
-    border-radius:16px;
+padding:15px 35px;
 
-    font-size:24px;
+font-size:24px;
 
-    cursor:pointer;
+cursor:pointer;
+```
+
 }
 
-/* =====================================
-   MOBILE RESPONSIVE
-===================================== */
+/* ==========================
+CONFETTI
+========================== */
+
+.confetti{
+
+```
+position:fixed;
+
+top:-20px;
+
+width:12px;
+height:12px;
+
+border-radius:50%;
+
+background:gold;
+
+animation:fall 4s linear forwards;
+
+z-index:9999;
+```
+
+}
+
+@keyframes fall{
+
+```
+from{
+    transform:translateY(-50px);
+}
+
+to{
+    transform:translateY(110vh);
+}
+```
+
+}
+
+/* ==========================
+MOBILE
+========================== */
 
 @media(max-width:900px){
 
-    #gameArea{
+```
+#gameArea{
+    flex-direction:column;
+}
 
-        flex-direction:column;
-    }
+#dropZones{
+    height:45%;
+}
 
-    #dropZones{
+.shape-img{
+    width:60px;
+    height:60px;
+}
 
-        grid-template-columns:
-        repeat(3,1fr);
+.dropzone{
+    min-height:120px;
+}
 
-        height:45%;
-    }
+#currentObject{
+    max-width:150px;
+    max-height:150px;
+}
+```
 
-    .shape-img{
-        width:60px;
-        height:60px;
-    }
-
-    .dropzone{
-        min-height:120px;
-    }
-
-    #currentObject{
-        max-width:150px;
-        max-height:150px;
-    }
-
-    header h2{
-        font-size:18px;
-    }
-
-    #scoreBox{
-        font-size:16px;
-    }
 }
 
 @media(max-width:600px){
 
-    header{
+```
+header{
 
-        flex-direction:column;
+    flex-direction:column;
 
-        height:auto;
+    height:auto;
 
-        gap:8px;
+    gap:8px;
 
-        padding:10px;
-    }
+    padding:10px;
+}
 
-    .shape-column h3{
-        font-size:14px;
-    }
+.shape-column h3{
+    font-size:14px;
+}
 
-    .dropzone{
-        min-height:90px;
-    }
+.dropzone{
+    min-height:90px;
+}
 
-    #currentObject{
-        max-width:130px;
-        max-height:130px;
-    }
+#currentObject{
+    max-width:120px;
+    max-height:120px;
+}
 
-    #stars{
-        font-size:40px;
-    }
+.feedback{
+    font-size:80px;
+}
 
-    .feedback{
-        font-size:80px;
-    }
+#stars{
+    font-size:40px;
+}
+```
+
 }
