@@ -1,316 +1,462 @@
-const shapeItems = {
+// ==========================================
+// GAME DATA
+// ==========================================
 
-Pentagon:[
-"house.png",
-"gift.png"
-],
-
-Hexagon:[
-"honey.png",
-"nut.png",
-"tile.png",
-"go.png",
-"pencil.png"
-],
-
-Octagon:[
-"stop.png",
-"roadmarker.png",
-"specs.png"
-]
-
-};
-
-const allObjects=[
-
-"house.png",
-"gift.png",
-
-"honey.png",
-"nut.png",
-"tile.png",
-"go.png",
-"pencil.png",
-
-"stop.png",
-"roadmarker.png",
-"specs.png"
-
+const objects = [
+{
+    name: "House",
+    image: "assets/house.png",
+    shape: "pentagon"
+},
+{
+    name: "Gift",
+    image: "assets/gift.png",
+    shape: "pentagon"
+},
+{
+    name: "Badge",
+    image: "assets/badge.png",
+    shape: "pentagon"
+},
+{
+    name: "Honey",
+    image: "assets/honey.png",
+    shape: "hexagon"
+},
+{
+    name: "Nut",
+    image: "assets/nut.png",
+    shape: "hexagon"
+},
+{
+    name: "Pencil",
+    image: "assets/pencil.png",
+    shape: "hexagon"
+},
+{
+    name: "Tile",
+    image: "assets/tile.png",
+    shape: "hexagon"
+},
+{
+    name: "Go Sign",
+    image: "assets/go.png",
+    shape: "hexagon"
+},
+{
+    name: "Stop Sign",
+    image: "assets/stop.png",
+    shape: "octagon"
+},
+{
+    name: "Road Marker",
+    image: "assets/roadmarker.png",
+    shape: "octagon"
+},
+{
+    name: "Clock",
+    image: "assets/clock.png",
+    shape: "octagon"
+},
+{
+    name: "Spectacles",
+    image: "assets/specs.png",
+    shape: "octagon"
+}
 ];
+
+// ==========================================
+// ELEMENTS
+// ==========================================
+
+const splashScreen = document.getElementById("splashScreen");
+const instructionScreen = document.getElementById("instructionScreen");
+const gameScreen = document.getElementById("gameScreen");
+const completionScreen = document.getElementById("completionScreen");
+
+const startBtn = document.getElementById("startBtn");
+const playAgainBtn = document.getElementById("playAgainBtn");
+const tryAgainBtn = document.getElementById("tryAgainBtn");
+
+const currentObject = document.getElementById("currentObject");
+
+const scoreText = document.getElementById("score");
+const totalText = document.getElementById("total");
+
+const tick = document.getElementById("tick");
+const cross = document.getElementById("cross");
+
+const finalScore = document.getElementById("finalScore");
+const percentageText = document.getElementById("percentage");
+const starsDiv = document.getElementById("stars");
+
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
+const bgMusic = document.getElementById("bgMusic");
+
+const dropzones = document.querySelectorAll(".dropzone");
+
+// ==========================================
+// VARIABLES
+// ==========================================
 
 let score = 0;
-let currentShape = "";
+let currentIndex = 0;
+let draggedShape = "";
+let draggedName = "";
+let gameCompleted = false;
 
-const scoreDisplay =
-document.getElementById("score");
+// ==========================================
+// INITIALIZE
+// ==========================================
 
-const targetText =
-document.getElementById("targetText");
+totalText.textContent = objects.length;
 
-const feedback =
-document.getElementById("feedback");
+setTimeout(() => {
 
-const bgMusic =
-document.getElementById("bgMusic");
+    splashScreen.classList.add("hidden");
+    instructionScreen.classList.remove("hidden");
 
-const claps =
-document.getElementById("claps");
+    speak(
+        "Welcome to Shape Sorting Adventure. Look at the picture on the left. Drag it to the correct shape column on the right. If you are correct, you will earn a point. If you are wrong, try again. Let's begin!"
+    );
 
-const buzzer =
-document.getElementById("buzzer");
+}, 5000);
 
-function speak(text, callback=null){
+// ==========================================
+// SPEECH
+// ==========================================
 
-if(!window.speechSynthesis){
+function speak(text)
+{
+    speechSynthesis.cancel();
 
-if(callback) callback();
+    const utterance = new SpeechSynthesisUtterance(text);
 
-return;
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    utterance.volume = 1;
+
+    speechSynthesis.speak(utterance);
 }
 
-speechSynthesis.cancel();
+// ==========================================
+// START GAME
+// ==========================================
 
-const utter =
-new SpeechSynthesisUtterance(text);
+startBtn.addEventListener("click", () =>
+{
+    instructionScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
 
-utter.rate = 0.9;
+    bgMusic.volume = 0.3;
 
-if(callback){
-utter.onend = callback;
-}
+    bgMusic.play().catch(() => {});
 
-speechSynthesis.speak(utter);
-
-}
-
-function createObjects(){
-
-const container =
-document.getElementById("objects");
-
-container.innerHTML="";
-
-allObjects.forEach(item=>{
-
-const card =
-document.createElement("div");
-
-card.className="card";
-
-const img =
-document.createElement("img");
-
-img.src =
-"assets/" + item;
-
-img.draggable = true;
-
-img.dataset.name = item;
-
-img.addEventListener("dragstart",e=>{
-
-e.dataTransfer.setData(
-"text/plain",
-item
-);
-
+    loadObject();
 });
 
-card.appendChild(img);
+// ==========================================
+// LOAD OBJECT
+// ==========================================
 
-container.appendChild(card);
+function loadObject()
+{
+    if(currentIndex >= objects.length)
+    {
+        finishGame();
+        return;
+    }
 
+    const obj = objects[currentIndex];
+
+    currentObject.src = obj.image;
+    currentObject.alt = obj.name;
+
+    draggedShape = obj.shape;
+    draggedName = obj.name;
+
+    currentObject.style.animation = "none";
+
+    void currentObject.offsetWidth;
+
+    currentObject.style.animation = "riseUp .8s ease";
+
+    speak(`Drag the ${obj.name}`);
+}
+
+// ==========================================
+// DRAG SUPPORT
+// ==========================================
+
+currentObject.addEventListener("dragstart", (e)=>
+{
+    e.dataTransfer.setData("shape", draggedShape);
 });
 
-}
+dropzones.forEach(zone =>
+{
+    zone.addEventListener("dragover",(e)=>
+    {
+        e.preventDefault();
+        zone.classList.add("dragover");
+    });
 
-createObjects();
+    zone.addEventListener("dragleave",()=>
+    {
+        zone.classList.remove("dragover");
+    });
 
-window.onload = ()=>{
+    zone.addEventListener("drop",(e)=>
+    {
+        e.preventDefault();
 
-setTimeout(()=>{
+        zone.classList.remove("dragover");
 
-document.getElementById("splash")
-.style.display="none";
+        const selectedShape =
+        zone.dataset.shape;
 
-document.getElementById("game")
-.style.display="block";
-
-speak(
-"Welcome. Spin the spinner. Drag the correct object to the matching shape.",
-()=>{
-
-bgMusic.volume=0.25;
-
-bgMusic.play();
-
-}
-);
-
-},5000);
-
-};
-
-document.getElementById("spinner")
-.addEventListener("click",()=>{
-
-const shapes=[
-"Pentagon",
-"Hexagon",
-"Octagon"
-];
-
-currentShape =
-shapes[
-Math.floor(
-Math.random()*3
-)
-];
-
-targetText.innerHTML =
-"Find a " + currentShape;
-
-speak(
-"Find a " + currentShape
-);
-
+        checkAnswer(selectedShape);
+    });
 });
 
-document.querySelectorAll(".shape")
-.forEach(shape=>{
+// ==========================================
+// TOUCH SUPPORT
+// ==========================================
 
-shape.addEventListener(
-"dragover",
-e=>{
-e.preventDefault();
-}
-);
+let touchClone = null;
 
-shape.addEventListener(
-"drop",
-e=>{
+currentObject.addEventListener("touchstart", startTouch);
 
-e.preventDefault();
+function startTouch(e)
+{
+    const touch = e.touches[0];
 
-const item =
-e.dataTransfer.getData(
-"text/plain"
-);
+    touchClone = currentObject.cloneNode(true);
 
-const droppedShape =
-shape.dataset.shape;
+    touchClone.style.position = "fixed";
+    touchClone.style.width = "120px";
+    touchClone.style.zIndex = "9999";
+    touchClone.style.pointerEvents = "none";
 
-if(
-droppedShape !== currentShape
-){
-wrongAnswer();
-return;
+    document.body.appendChild(touchClone);
+
+    moveTouch(touch);
 }
 
-if(
-shapeItems[currentShape]
-.includes(item)
-){
-correctAnswer(item);
-}
-else{
-wrongAnswer();
-}
+document.addEventListener("touchmove",(e)=>
+{
+    if(!touchClone) return;
 
-}
-);
-
+    moveTouch(e.touches[0]);
 });
 
-function correctAnswer(item){
+document.addEventListener("touchend",(e)=>
+{
+    if(!touchClone) return;
 
-score++;
+    const touch =
+    e.changedTouches[0];
 
-scoreDisplay.textContent =
-score;
+    let dropped = false;
 
-feedback.innerHTML =
-"✅ Great Job!";
+    dropzones.forEach(zone =>
+    {
+        const rect =
+        zone.getBoundingClientRect();
 
-claps.currentTime = 0;
+        if(
+            touch.clientX >= rect.left &&
+            touch.clientX <= rect.right &&
+            touch.clientY >= rect.top &&
+            touch.clientY <= rect.bottom
+        )
+        {
+            dropped = true;
 
-claps.play();
+            checkAnswer(
+                zone.dataset.shape
+            );
+        }
+    });
 
-speak("Excellent");
-
-document
-.querySelectorAll(".card img")
-.forEach(img=>{
-
-if(
-img.dataset.name===item
-){
-
-img.parentElement.remove();
-
-}
-
+    touchClone.remove();
+    touchClone = null;
 });
 
-setTimeout(()=>{
+function moveTouch(touch)
+{
+    touchClone.style.left =
+    touch.clientX - 60 + "px";
 
-feedback.innerHTML="";
-
-targetText.innerHTML=
-"Spin Again";
-
-},2000);
-
-checkFinish();
-
+    touchClone.style.top =
+    touch.clientY - 60 + "px";
 }
 
-function wrongAnswer(){
+// ==========================================
+// CHECK ANSWER
+// ==========================================
 
-feedback.innerHTML =
-"❌ Try Again";
+function checkAnswer(selectedShape)
+{
+    if(gameCompleted) return;
 
-buzzer.currentTime = 0;
-
-buzzer.play();
-
-speak("Try Again");
-
+    if(selectedShape === draggedShape)
+    {
+        correctAnswer();
+    }
+    else
+    {
+        wrongAnswer();
+    }
 }
 
-function checkFinish(){
+// ==========================================
+// CORRECT
+// ==========================================
 
-const remaining =
-document.querySelectorAll(
-".card img"
-).length;
+function correctAnswer()
+{
+    correctSound.currentTime = 0;
+    correctSound.play();
 
-if(remaining===0){
+    speak("Great Job");
 
-document.getElementById(
-"finalScreen"
-).style.display="flex";
+    score++;
 
-document.getElementById(
-"finalScore"
-).innerHTML=
-"Total Score : "
-+ score +
-" / 10";
+    scoreText.textContent = score;
 
-claps.play();
+    tick.classList.remove("hidden");
 
-speak(
-"Congratulations. You completed the game."
-);
+    setTimeout(() =>
+    {
+        tick.classList.add("hidden");
 
+        currentIndex++;
+
+        loadObject();
+
+    }, 1500);
 }
 
+// ==========================================
+// WRONG
+// ==========================================
+
+function wrongAnswer()
+{
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+
+    speak("Try Again");
+
+    cross.classList.remove("hidden");
+
+    tryAgainBtn.classList.remove("hidden");
 }
 
-document.getElementById("replayBtn")
-.addEventListener("click",()=>{
+// ==========================================
+// TRY AGAIN
+// ==========================================
 
-location.reload();
+tryAgainBtn.addEventListener("click",()=>
+{
+    cross.classList.add("hidden");
+    tryAgainBtn.classList.add("hidden");
 
+    speak(`Drag the ${draggedName}`);
 });
+
+// ==========================================
+// FINISH GAME
+// ==========================================
+
+function finishGame()
+{
+    gameCompleted = true;
+
+    bgMusic.pause();
+
+    gameScreen.classList.add("hidden");
+    completionScreen.classList.remove("hidden");
+
+    const percentage =
+    Math.round(
+        (score / objects.length) * 100
+    );
+
+    finalScore.textContent =
+    `Score: ${score} / ${objects.length}`;
+
+    percentageText.textContent =
+    `${percentage}%`;
+
+    if(percentage === 100)
+    {
+        starsDiv.innerHTML = "⭐⭐⭐";
+    }
+    else if(percentage >= 80)
+    {
+        starsDiv.innerHTML = "⭐⭐";
+    }
+    else
+    {
+        starsDiv.innerHTML = "⭐";
+    }
+
+    speak(
+        "Congratulations. You completed the game."
+    );
+
+    createConfetti();
+}
+
+// ==========================================
+// PLAY AGAIN
+// ==========================================
+
+playAgainBtn.addEventListener("click",()=>
+{
+    score = 0;
+    currentIndex = 0;
+    gameCompleted = false;
+
+    scoreText.textContent = 0;
+
+    completionScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
+
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(()=>{});
+
+    loadObject();
+});
+
+// ==========================================
+// CONFETTI
+// ==========================================
+
+function createConfetti()
+{
+    for(let i=0;i<50;i++)
+    {
+        const confetti =
+        document.createElement("div");
+
+        confetti.className =
+        "confetti";
+
+        confetti.style.left =
+        Math.random()*100 + "%";
+
+        confetti.style.animationDelay =
+        Math.random()*2 + "s";
+
+        document.body.appendChild(confetti);
+
+        setTimeout(() =>
+        {
+            confetti.remove();
+        },4000);
+    }
+}
