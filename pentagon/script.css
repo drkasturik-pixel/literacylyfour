@@ -2,67 +2,21 @@
 // GAME DATA
 // ==========================================
 
-const objects = [
-{
-    name: "House",
-    image: "assets/house.png",
-    shape: "pentagon"
-},
-{
-    name: "Gift",
-    image: "assets/gift.png",
-    shape: "pentagon"
-},
-{
-    name: "Badge",
-    image: "assets/badge.png",
-    shape: "pentagon"
-},
-{
-    name: "Honey",
-    image: "assets/honey.png",
-    shape: "hexagon"
-},
-{
-    name: "Nut",
-    image: "assets/nut.png",
-    shape: "hexagon"
-},
-{
-    name: "Pencil",
-    image: "assets/pencil.png",
-    shape: "hexagon"
-},
-{
-    name: "Tile",
-    image: "assets/tile.png",
-    shape: "hexagon"
-},
-{
-    name: "Go Sign",
-    image: "assets/go.png",
-    shape: "hexagon"
-},
-{
-    name: "Stop Sign",
-    image: "assets/stop.png",
-    shape: "octagon"
-},
-{
-    name: "Road Marker",
-    image: "assets/roadmarker.png",
-    shape: "octagon"
-},
-{
-    name: "Clock",
-    image: "assets/clock.png",
-    shape: "octagon"
-},
-{
-    name: "Spectacles",
-    image: "assets/specs.png",
-    shape: "octagon"
-}
+const gameObjects = [
+  { name: "House", image: "assets/house.png", shape: "pentagon" },
+  { name: "Gift", image: "assets/gift.png", shape: "pentagon" },
+  { name: "Badge", image: "assets/badge.png", shape: "pentagon" },
+
+  { name: "Honey", image: "assets/honey.png", shape: "hexagon" },
+  { name: "Nut", image: "assets/nut.png", shape: "hexagon" },
+  { name: "Pencil", image: "assets/pencil.png", shape: "hexagon" },
+  { name: "Tile", image: "assets/tile.png", shape: "hexagon" },
+  { name: "Go Sign", image: "assets/go.png", shape: "hexagon" },
+
+  { name: "Stop Sign", image: "assets/stop.png", shape: "octagon" },
+  { name: "Road Marker", image: "assets/roadmarker.png", shape: "octagon" },
+  { name: "Clock", image: "assets/clock.png", shape: "octagon" },
+  { name: "Spectacles", image: "assets/specs.png", shape: "octagon" }
 ];
 
 // ==========================================
@@ -80,8 +34,8 @@ const tryAgainBtn = document.getElementById("tryAgainBtn");
 
 const currentObject = document.getElementById("currentObject");
 
-const scoreText = document.getElementById("score");
-const totalText = document.getElementById("total");
+const scoreDisplay = document.getElementById("score");
+const totalDisplay = document.getElementById("total");
 
 const tick = document.getElementById("tick");
 const cross = document.getElementById("cross");
@@ -102,194 +56,225 @@ const dropzones = document.querySelectorAll(".dropzone");
 
 let score = 0;
 let currentIndex = 0;
-let draggedShape = "";
-let draggedName = "";
-let gameCompleted = false;
+let currentItem = null;
+let gameLocked = false;
 
 // ==========================================
-// INITIALIZE
+// INITIALIZATION
 // ==========================================
 
-totalText.textContent = objects.length;
+totalDisplay.textContent = gameObjects.length;
 
-setTimeout(() => {
+// Splash Screen
+
+window.addEventListener("load", () => {
+
+  setTimeout(() => {
 
     splashScreen.classList.add("hidden");
     instructionScreen.classList.remove("hidden");
 
     speak(
-        "Welcome to Shape Sorting Adventure. Look at the picture on the left. Drag it to the correct shape column on the right. If you are correct, you will earn a point. If you are wrong, try again. Let's begin!"
+      "Welcome to Shape Sorting Adventure. Look at the picture on the left. Drag it to the correct shape column on the right. If you are correct, you will earn a point. If you are wrong, try again. Let's begin."
     );
 
-}, 5000);
+  }, 5000);
+
+});
 
 // ==========================================
 // SPEECH
 // ==========================================
 
-function speak(text)
-{
-    speechSynthesis.cancel();
+function speak(text) {
 
-    const utterance = new SpeechSynthesisUtterance(text);
+  if (!window.speechSynthesis) return;
 
-    utterance.rate = 0.9;
-    utterance.pitch = 1.1;
-    utterance.volume = 1;
+  speechSynthesis.cancel();
 
-    speechSynthesis.speak(utterance);
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  utterance.rate = 0.9;
+  utterance.pitch = 1.1;
+  utterance.volume = 1;
+
+  speechSynthesis.speak(utterance);
+}
+
+// ==========================================
+// AUDIO
+// ==========================================
+
+function playAudio(audio) {
+
+  if (!audio) return;
+
+  audio.pause();
+  audio.currentTime = 0;
+
+  audio.play().catch(err => {
+    console.log(err);
+  });
 }
 
 // ==========================================
 // START GAME
 // ==========================================
 
-startBtn.addEventListener("click", () =>
-{
-    instructionScreen.classList.add("hidden");
-    gameScreen.classList.remove("hidden");
+startBtn.addEventListener("click", () => {
 
-    bgMusic.volume = 0.3;
+  instructionScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
 
-    bgMusic.play().catch(() => {});
+  bgMusic.volume = 0.3;
 
-    loadObject();
+  bgMusic.play().catch(() => {});
+
+  loadNextObject();
 });
 
 // ==========================================
 // LOAD OBJECT
 // ==========================================
 
-function loadObject()
-{
-    if(currentIndex >= objects.length)
-    {
-        finishGame();
-        return;
-    }
+function loadNextObject() {
 
-    const obj = objects[currentIndex];
+  if (currentIndex >= gameObjects.length) {
+    finishGame();
+    return;
+  }
 
-    currentObject.src = obj.image;
-    currentObject.alt = obj.name;
+  currentItem = gameObjects[currentIndex];
 
-    draggedShape = obj.shape;
-    draggedName = obj.name;
+  currentObject.src = currentItem.image;
+  currentObject.alt = currentItem.name;
 
-    currentObject.style.animation = "none";
+  currentObject.onerror = () => {
+    console.error("Missing image:", currentItem.image);
+  };
 
-    void currentObject.offsetWidth;
+  currentObject.style.animation = "none";
+  void currentObject.offsetWidth;
+  currentObject.style.animation = "riseUp .8s ease";
 
-    currentObject.style.animation = "riseUp .8s ease";
-
-    speak(`Drag the ${obj.name}`);
+  speak(`Drag the ${currentItem.name}`);
 }
 
 // ==========================================
-// DRAG SUPPORT
+// DESKTOP DRAG
 // ==========================================
 
-currentObject.addEventListener("dragstart", (e)=>
-{
-    e.dataTransfer.setData("shape", draggedShape);
+currentObject.addEventListener("dragstart", (e) => {
+
+  e.dataTransfer.setData(
+    "shape",
+    currentItem.shape
+  );
+
 });
 
-dropzones.forEach(zone =>
-{
-    zone.addEventListener("dragover",(e)=>
-    {
-        e.preventDefault();
-        zone.classList.add("dragover");
-    });
+dropzones.forEach(zone => {
 
-    zone.addEventListener("dragleave",()=>
-    {
-        zone.classList.remove("dragover");
-    });
+  zone.addEventListener("dragover", (e) => {
 
-    zone.addEventListener("drop",(e)=>
-    {
-        e.preventDefault();
+    e.preventDefault();
 
-        zone.classList.remove("dragover");
+    zone.classList.add("dragover");
+  });
 
-        const selectedShape =
-        zone.dataset.shape;
+  zone.addEventListener("dragleave", () => {
 
-        checkAnswer(selectedShape);
-    });
+    zone.classList.remove("dragover");
+  });
+
+  zone.addEventListener("drop", (e) => {
+
+    e.preventDefault();
+
+    zone.classList.remove("dragover");
+
+    evaluateAnswer(
+      zone.dataset.shape
+    );
+
+  });
+
 });
 
 // ==========================================
 // TOUCH SUPPORT
 // ==========================================
 
-let touchClone = null;
+let activeClone = null;
 
-currentObject.addEventListener("touchstart", startTouch);
+currentObject.addEventListener(
+  "touchstart",
+  touchStart,
+  { passive: true }
+);
 
-function startTouch(e)
-{
-    const touch = e.touches[0];
+function touchStart(e) {
 
-    touchClone = currentObject.cloneNode(true);
+  const touch = e.touches[0];
 
-    touchClone.style.position = "fixed";
-    touchClone.style.width = "120px";
-    touchClone.style.zIndex = "9999";
-    touchClone.style.pointerEvents = "none";
+  activeClone =
+    currentObject.cloneNode(true);
 
-    document.body.appendChild(touchClone);
+  activeClone.style.position = "fixed";
+  activeClone.style.width = "120px";
+  activeClone.style.zIndex = "9999";
+  activeClone.style.pointerEvents = "none";
 
-    moveTouch(touch);
+  document.body.appendChild(activeClone);
+
+  moveClone(touch);
 }
 
-document.addEventListener("touchmove",(e)=>
-{
-    if(!touchClone) return;
+document.addEventListener("touchmove", e => {
 
-    moveTouch(e.touches[0]);
+  if (!activeClone) return;
+
+  moveClone(e.touches[0]);
+
 });
 
-document.addEventListener("touchend",(e)=>
-{
-    if(!touchClone) return;
+document.addEventListener("touchend", e => {
 
-    const touch =
+  if (!activeClone) return;
+
+  const touch =
     e.changedTouches[0];
 
-    let dropped = false;
+  dropzones.forEach(zone => {
 
-    dropzones.forEach(zone =>
-    {
-        const rect =
-        zone.getBoundingClientRect();
+    const rect =
+      zone.getBoundingClientRect();
 
-        if(
-            touch.clientX >= rect.left &&
-            touch.clientX <= rect.right &&
-            touch.clientY >= rect.top &&
-            touch.clientY <= rect.bottom
-        )
-        {
-            dropped = true;
+    if (
+      touch.clientX >= rect.left &&
+      touch.clientX <= rect.right &&
+      touch.clientY >= rect.top &&
+      touch.clientY <= rect.bottom
+    ) {
 
-            checkAnswer(
-                zone.dataset.shape
-            );
-        }
-    });
+      evaluateAnswer(
+        zone.dataset.shape
+      );
+    }
 
-    touchClone.remove();
-    touchClone = null;
+  });
+
+  activeClone.remove();
+  activeClone = null;
+
 });
 
-function moveTouch(touch)
-{
-    touchClone.style.left =
+function moveClone(touch) {
+
+  activeClone.style.left =
     touch.clientX - 60 + "px";
 
-    touchClone.style.top =
+  activeClone.style.top =
     touch.clientY - 60 + "px";
 }
 
@@ -297,166 +282,178 @@ function moveTouch(touch)
 // CHECK ANSWER
 // ==========================================
 
-function checkAnswer(selectedShape)
-{
-    if(gameCompleted) return;
+function evaluateAnswer(selectedShape) {
 
-    if(selectedShape === draggedShape)
-    {
-        correctAnswer();
-    }
-    else
-    {
-        wrongAnswer();
-    }
+  if (gameLocked) return;
+
+  if (selectedShape === currentItem.shape) {
+
+    correctAnswer();
+
+  } else {
+
+    wrongAnswer();
+
+  }
 }
 
 // ==========================================
 // CORRECT
 // ==========================================
 
-function correctAnswer()
-{
-    correctSound.currentTime = 0;
-    correctSound.play();
+function correctAnswer() {
 
-    speak("Great Job");
+  gameLocked = true;
 
-    score++;
+  playAudio(correctSound);
 
-    scoreText.textContent = score;
+  speak("Great Job");
 
-    tick.classList.remove("hidden");
+  score++;
 
-    setTimeout(() =>
-    {
-        tick.classList.add("hidden");
+  scoreDisplay.textContent = score;
 
-        currentIndex++;
+  tick.classList.remove("hidden");
 
-        loadObject();
+  setTimeout(() => {
 
-    }, 1500);
+    tick.classList.add("hidden");
+
+    currentIndex++;
+
+    gameLocked = false;
+
+    loadNextObject();
+
+  }, 1500);
 }
 
 // ==========================================
 // WRONG
 // ==========================================
 
-function wrongAnswer()
-{
-    wrongSound.currentTime = 0;
-    wrongSound.play();
+function wrongAnswer() {
 
-    speak("Try Again");
+  playAudio(wrongSound);
 
-    cross.classList.remove("hidden");
+  speak("Try Again");
 
-    tryAgainBtn.classList.remove("hidden");
+  cross.classList.remove("hidden");
+
+  tryAgainBtn.classList.remove("hidden");
 }
 
 // ==========================================
 // TRY AGAIN
 // ==========================================
 
-tryAgainBtn.addEventListener("click",()=>
-{
-    cross.classList.add("hidden");
-    tryAgainBtn.classList.add("hidden");
+tryAgainBtn.addEventListener("click", () => {
 
-    speak(`Drag the ${draggedName}`);
+  cross.classList.add("hidden");
+
+  tryAgainBtn.classList.add("hidden");
+
+  speak(
+    `Drag the ${currentItem.name}`
+  );
+
 });
 
 // ==========================================
 // FINISH GAME
 // ==========================================
 
-function finishGame()
-{
-    gameCompleted = true;
+function finishGame() {
 
-    bgMusic.pause();
+  bgMusic.pause();
 
-    gameScreen.classList.add("hidden");
-    completionScreen.classList.remove("hidden");
+  gameScreen.classList.add("hidden");
 
-    const percentage =
-    Math.round(
-        (score / objects.length) * 100
-    );
+  completionScreen.classList.remove("hidden");
 
-    finalScore.textContent =
-    `Score: ${score} / ${objects.length}`;
+  const percentage = Math.round(
+    (score / gameObjects.length) * 100
+  );
 
-    percentageText.textContent =
+  finalScore.textContent =
+    `Score: ${score} / ${gameObjects.length}`;
+
+  percentageText.textContent =
     `${percentage}%`;
 
-    if(percentage === 100)
-    {
-        starsDiv.innerHTML = "⭐⭐⭐";
-    }
-    else if(percentage >= 80)
-    {
-        starsDiv.innerHTML = "⭐⭐";
-    }
-    else
-    {
-        starsDiv.innerHTML = "⭐";
-    }
+  if (percentage === 100) {
 
-    speak(
-        "Congratulations. You completed the game."
-    );
+    starsDiv.innerHTML = "⭐⭐⭐";
 
-    createConfetti();
+  } else if (percentage >= 80) {
+
+    starsDiv.innerHTML = "⭐⭐";
+
+  } else {
+
+    starsDiv.innerHTML = "⭐";
+
+  }
+
+  speak(
+    "Congratulations! You completed the game."
+  );
+
+  createConfetti();
 }
 
 // ==========================================
 // PLAY AGAIN
 // ==========================================
 
-playAgainBtn.addEventListener("click",()=>
-{
-    score = 0;
-    currentIndex = 0;
-    gameCompleted = false;
+playAgainBtn.addEventListener("click", () => {
 
-    scoreText.textContent = 0;
+  score = 0;
+  currentIndex = 0;
 
-    completionScreen.classList.add("hidden");
-    gameScreen.classList.remove("hidden");
+  scoreDisplay.textContent = 0;
 
-    bgMusic.currentTime = 0;
-    bgMusic.play().catch(()=>{});
+  completionScreen.classList.add("hidden");
 
-    loadObject();
+  gameScreen.classList.remove("hidden");
+
+  bgMusic.currentTime = 0;
+
+  bgMusic.play().catch(() => {});
+
+  loadNextObject();
 });
 
 // ==========================================
 // CONFETTI
 // ==========================================
 
-function createConfetti()
-{
-    for(let i=0;i<50;i++)
-    {
-        const confetti =
-        document.createElement("div");
+function createConfetti() {
 
-        confetti.className =
-        "confetti";
+  for (let i = 0; i < 50; i++) {
 
-        confetti.style.left =
-        Math.random()*100 + "%";
+    const confetti =
+      document.createElement("div");
 
-        confetti.style.animationDelay =
-        Math.random()*2 + "s";
+    confetti.className =
+      "confetti";
 
-        document.body.appendChild(confetti);
+    confetti.style.left =
+      Math.random() * 100 + "%";
 
-        setTimeout(() =>
-        {
-            confetti.remove();
-        },4000);
-    }
+    confetti.style.animationDelay =
+      Math.random() * 2 + "s";
+
+    document.body.appendChild(
+      confetti
+    );
+
+    setTimeout(() => {
+
+      confetti.remove();
+
+    }, 4000);
+
+  }
+
 }
