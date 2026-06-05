@@ -3,81 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shape Sorting Game</title>
+<title>Shape Sorting Adventure</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="splash">
-    <img src="assets/innovine-logo.png">
+<!-- SPLASH SCREEN -->
+<div id="splashScreen" class="screen">
+    <img src="assets/innovine-logo.png" id="logo" alt="Innovine Logo">
 </div>
 
-<div id="game">
+<!-- INSTRUCTION SCREEN -->
+<div id="instructionScreen" class="screen hidden">
 
-    <h1 id="instruction">
-        Drag each object into the correct shape column
-    </h1>
+    <div class="instruction-box">
 
-    <div id="scorePanel">
-        Score: <span id="score">0</span>
-    </div>
+        <h1>Shape Sorting Adventure</h1>
 
-    <div id="feedback"></div>
+        <p>
+            Look at the picture on the left.
+            Drag it to the correct shape column.
+            Earn points for correct answers.
+            If you are wrong, try again!
+        </p>
 
-    <div id="columns">
-
-        <div class="column" data-shape="Pentagon">
-
-            <img src="assets/pentagon.png" class="shapeImage">
-
-            <h2>Pentagon</h2>
-
-            <div class="dropZone"></div>
-
-        </div>
-
-        <div class="column" data-shape="Hexagon">
-
-            <img src="assets/hexagon.png" class="shapeImage">
-
-            <h2>Hexagon</h2>
-
-            <div class="dropZone"></div>
-
-        </div>
-
-        <div class="column" data-shape="Octagon">
-
-            <img src="assets/octagon.png" class="shapeImage">
-
-            <h2>Octagon</h2>
-
-            <div class="dropZone"></div>
-
-        </div>
+        <button id="startBtn">
+            Start Game
+        </button>
 
     </div>
 
-    <div id="objectTray"></div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen" class="hidden">
+
+    <header>
+
+        <h2>Shape Sorting Adventure</h2>
+
+        <div id="scoreBox">
+            Score:
+            <span id="score">0</span> /
+            <span id="total">12</span>
+        </div>
+
+    </header>
+
+    <main id="gameArea">
+
+        <!-- LEFT SIDE -->
+        <section id="objectArea">
+
+            <div id="feedbackContainer">
+
+                <div id="tick" class="feedback hidden">
+                    ✓
+                </div>
+
+                <div id="cross" class="feedback hidden">
+                    ✗
+                </div>
+
+            </div>
+
+            <div id="currentObjectContainer">
+
+                <img
+                    id="currentObject"
+                    draggable="true"
+                    src=""
+                    alt=""
+                >
+
+            </div>
+
+            <button id="tryAgainBtn" class="hidden">
+                Try Again
+            </button>
+
+        </section>
+
+        <!-- RIGHT SIDE -->
+        <section id="dropZones">
+
+            <!-- PENTAGON -->
+            <div
+                class="shape-column"
+                data-shape="pentagon"
+            >
+
+                <img
+                    src="assets/pentagonshape.png"
+                    class="shape-img"
+                >
+
+                <h3>Pentagon</h3>
+
+                <div
+                    class="dropzone"
+                    id="pentagonZone"
+                    data-shape="pentagon"
+                ></div>
+
+            </div>
+
+            <!-- HEXAGON -->
+            <div
+                class="shape-column"
+                data-shape="hexagon"
+            >
+
+                <img
+                    src="assets/hexagonshape.png"
+                    class="shape-img"
+                >
+
+                <h3>Hexagon</h3>
+
+                <div
+                    class="dropzone"
+                    id="hexagonZone"
+                    data-shape="hexagon"
+                ></div>
+
+            </div>
+
+            <!-- OCTAGON -->
+            <div
+                class="shape-column"
+                data-shape="octagon"
+            >
+
+                <img
+                    src="assets/octagon.png"
+                    class="shape-img"
+                >
+
+                <h3>Octagon</h3>
+
+                <div
+                    class="dropzone"
+                    id="octagonZone"
+                    data-shape="octagon"
+                ></div>
+
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
 
-<div id="finalScreen">
+<!-- COMPLETION SCREEN -->
+<div id="completionScreen" class="screen hidden">
 
-    <h1>🎉 Congratulations!</h1>
+    <div class="completion-card">
 
-    <h2 id="finalScore"></h2>
+        <h1>🎉 Congratulations! 🎉</h1>
 
-    <button onclick="location.reload()">
-        Play Again
-    </button>
+        <p>
+            You completed the Shape Sorting Adventure!
+        </p>
+
+        <h2 id="finalScore">
+            Score: 0 / 12
+        </h2>
+
+        <h2 id="percentage">
+            0%
+        </h2>
+
+        <div id="stars"></div>
+
+        <button id="playAgainBtn">
+            Play Again
+        </button>
+
+    </div>
 
 </div>
 
-<audio id="bgMusic" src="assets/bgmusic.mp3" loop></audio>
-<audio id="claps" src="assets/claps.mp3"></audio>
-<audio id="buzzer" src="assets/buzzer.mp3"></audio>
+<!-- AUDIO -->
+<audio
+    id="correctSound"
+    src="assets/correct.mp3"
+></audio>
+
+<audio
+    id="wrongSound"
+    src="assets/wrong.mp3"
+></audio>
+
+<audio
+    id="bgMusic"
+    src="assets/backgroundmusic.mp3"
+    loop
+></audio>
 
 <script src="script.js"></script>
 
